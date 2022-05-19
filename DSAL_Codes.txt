@@ -2124,4 +2124,414 @@ int main()
     }while(ch!=5);
 }
                                                 
+Assignment 2 
+//skip list
 
+import random 
+  
+class Node: 
+    
+    def __init__(self, key, level): 
+        self.key = key 
+		# list to hold addresses to node of different level
+        self.next = [None]*(level+1) 
+  
+class SkipList: 
+   
+    def __init__(self, max_lvl, P):        
+		# Maximum level for this skip list 
+		    self.MAXLVL = max_lvl 
+
+		# P is the fraction of the nodes with level 
+		# i references also having level i+1 references 
+		    self.P = P 
+
+		# create header node and initialize key to -1 
+		    self.header = self.createNode(self.MAXLVL, -1) 
+
+		# current level of skip list 
+		    self.level = 0
+		
+     # Create new node 
+    def createNode(self, lvl, key): 
+        n = Node(key, lvl) 
+        return n 
+     
+	 # create random level for node
+    def randomLevel(self): 
+        lvl = 0
+        while random.random()<self.P and lvl<self.MAXLVL:
+              lvl += 1
+        return lvl 
+		
+    # Insert key
+    def insertElement(self, key): 
+        update = [None]*(self.MAXLVL+1) 
+        current = self.header 
+  
+        ''' 
+        start from highest level of skip list move the current reference forward while key  
+        is greater than key of node next to current 
+		Otherwise inserted current in update and move one level down and continue search 
+        '''
+        for i in range(self.level, -1, -1): 
+            while current.next[i] and current.next[i].key < key: 
+                current = current.next[i] 
+            update[i] = current 
+  
+       #level 0 is reached and forward refernce to right which is the correct position for insertion
+        current = current.next[0] 
+  
+        ''' 
+        if current is NULL that means we have reached to end of the level or current's key is not equal 
+           to key to insert that means we have to insert node between update[0] and current node 
+       '''
+        if current == None or current.key != key: 
+            rlevel = self.randomLevel() 
+  
+            ''' 
+            If random level is greater than list's current level (node with highest level inserted in  
+            list so far), initialize update value with reference to header for further use 
+            '''
+            if rlevel > self.level: 
+                for i in range(self.level+1, rlevel+1): 
+                    update[i] = self.header 
+                self.level = rlevel 
+  
+            n = self.createNode(rlevel, key) 
+			
+            #insert the node and update all references
+            for i in range(rlevel+1): 
+                n.next[i] = update[i].next[i] 
+                update[i].next[i] = n 
+  
+            print("Successfully inserted key {}".format(key)) 
+ 
+    #Search the element
+    def searchElement(self, key):  
+        current = self.header 
+
+        for i in range(self.level, -1, -1): 
+            while(current.next[i] and current.next[i].key < key): 
+                current = current.next[i] 
+  
+        current = current.next[0] 
+  
+        if current and current.key == key: 
+            print("Entered Key Found ", key) 
+        else:
+            print("Entered Key Not Found ")
+  
+  
+    # Display the list levelwise
+    def displayList(self): 
+        print("\nSkip List Is : ") 
+        head = self.header 
+        for lvl in range(self.level+1): 
+            print("Level {}: ".format(lvl), end=" ") 
+            node = head.next[lvl] 
+            while(node != None): 
+                print(node.key, end=" ") 
+                node = node.next[lvl] 
+            print("") 
+  
+def main(): 
+    lst = SkipList(3, 0.5) 
+    
+    n=int(input("Enter total number of element"))
+
+    for i in range(0,n):
+        temp=int(input("Enter the Element"))
+        lst.insertElement(temp)
+
+    lst.displayList() 
+  
+    temp=int(input("Enter Element for searching"))
+    lst.searchElement(temp) 
+main()
+
+
+
+
+
+Assignment 5
+//threaded binary tree
+
+#include<iostream>
+#include<stdlib.h>
+using namespace std;
+struct node
+{
+    int data;
+    node *left,*right;
+    int lbit,rbit;
+};
+class tbt
+{
+   node *temp=NULL,*t1=NULL,*s=NULL,*head=NULL,*t=NULL;
+   public:
+  
+   node *create();
+   void insert();
+   node *insuc(node*);
+   node *inpre(node*);
+   void dis();
+   void display(node*);
+   void thr();
+   void thread(node*);
+};
+node *tbt::create()
+{
+   node *p=new(struct node);
+   p->left=NULL;
+   p->right=NULL;
+   p->lbit=0;
+   p->rbit=0;
+   cout<<"\n enter the data";
+   cin>>p->data;
+   return p;
+}
+void tbt::insert()
+{
+    temp=create();
+    if(head==NULL)
+    {  node *p=new(struct node);
+       head=p;
+       head->left=temp;
+       head->right=head;
+       head->lbit=1;
+       head->rbit=0;
+       temp->left=head;
+       temp->right=head;
+       temp->lbit=0;
+       temp->rbit=0;
+    }
+    else
+    {     t1=head;
+          t1=t1->left;
+        
+          while(t1!=NULL)
+          {   s=t1; 
+              if(((temp->data)>(t1->data))&&t1->rbit==1)
+              {   t1=t1->right;   }
+              else if(((temp->data)<(t1->data))&&t1->lbit==1)
+              {   t1=t1->left;     }
+              else
+              { break;       }
+          }
+          if(temp->data>s->data)
+          {  
+             s->right=temp;
+             s->rbit=1;
+             temp->left=inpre(head->left);
+             temp->right=insuc(head->left);
+          }
+          else
+          {
+             s->left=temp;
+             s->lbit=1;
+             temp->left=inpre(head->left);
+             temp->right=insuc(head->left);
+          }
+     }       
+            
+            
+         
+    
+}         
+node *tbt::inpre(node *m)
+{   
+    if(m->lbit==1)
+    { 
+      inpre(m->left);
+    }
+    if(m->data==temp->data&&t==NULL)
+    {  return head;       }
+    if(m->data==temp->data)
+    {   return t;         }
+    t=m;
+    if(m->rbit==1)
+    { inpre(m->right);
+    } 
+      
+}
+node *tbt::insuc(node *m)
+{  
+    if(m->lbit==1)
+    {  t=m;
+      insuc(m->left);
+    }
+   
+    if(m->data==temp->data&&t==NULL)
+    {  return head;       }
+    if(m->data==temp->data)
+    {   return t;        }
+   
+    if(m->rbit==1)
+    { insuc(m->right);
+    } 
+}
+void tbt::dis()
+{   display(head->left);
+}
+void tbt::display(node *m)
+{
+ 
+       if(m->lbit==1)
+       {   display(m->left);              }
+       cout<<"\n"<<m->data;
+       if(m->rbit==1)
+       {    display(m->right);             }
+      
+     
+  
+}
+void tbt::thr()
+{  cout<<"\n thread are";
+   thread(head->left);
+}
+void tbt::thread(node *m)
+{
+ 
+       if(m->lbit==1)
+       {   thread(m->left);              }
+       if(m->lbit==0||m->rbit==0)
+       {
+       cout<<"\n"<<m->data;
+       }
+       if(m->rbit==1)
+       {    thread(m->right);             }
+      
+     
+  
+}  
+int main()
+{  tbt t;  int ch;
+   while(1)
+   {
+  
+   cout<<"\n enter the choice";
+   cout<<"\n 1.insert data";
+   cout<<"\n 2.display all data";
+   cout<<"\n 3.display threaded node";
+   cout<<"\n 4.exit";
+   cin>>ch;
+   switch(ch)
+   {
+      case 1:
+                t.insert();
+                break;
+      case 2:
+                t.dis();
+                break;
+      case 3:
+                t.thr();
+                break;
+      case 4:  exit(0);
+               
+      default:
+               cout<<"\n invalid entry";
+    }             
+    }
+   return 0;
+}          
+
+
+
+
+Assignment 10 
+
+// reading marks using heap
+
+#include <iostream>
+using namespace std;
+class hp
+{
+    int heap[20], heap1[20], x, n1, i;
+
+public:
+    hp()
+    {
+        heap[0] = 0;
+        heap1[0] = 0;
+    }
+    void getdata();
+    void insert1(int heap[], int);
+    void upadjust1(int heap[], int);
+    void insert2(int heap1[], int);
+    void upadjust2(int heap1[], int);
+    void minmax();
+};
+void hp::getdata()
+{
+    cout << "\nEnter number of students : ";
+    cin >> n1;
+    cout << "\nEnter marks of students :";
+
+    for (i = 0; i < n1; i++)
+    {
+        cout << "\n"
+             << i + 1 << " : ";
+        cin >> x;
+        insert1(heap, x);
+        insert2(heap1, x);
+    }
+}
+void hp::insert1(int heap[20], int x)
+{
+    int n;
+    n = heap[0];
+    heap[n + 1] = x;
+    heap[0] = n + 1;
+
+    upadjust1(heap, n + 1);
+}
+void hp::upadjust1(int heap[20], int i)
+{
+    int temp;
+    while (i > 1 && heap[i] > heap[i / 2])
+    {
+        temp = heap[i];
+        heap[i] = heap[i / 2];
+        heap[i / 2] = temp;
+        i = i / 2;
+    }
+}
+void hp::insert2(int heap1[20], int x)
+{
+    int n;
+    n = heap1[0];
+    heap1[n + 1] = x;
+    heap1[0] = n + 1;
+
+    upadjust2(heap1, n + 1);
+}
+void hp::upadjust2(int heap1[20], int i)
+{
+    int temp1;
+    while (i > 1 && heap1[i] < heap1[i / 2])
+    {
+        temp1 = heap1[i];
+        heap1[i] = heap1[i / 2];
+        heap1[i / 2] = temp1;
+        i = i / 2;
+    }
+}
+void hp::minmax()
+{
+    cout << "\nMax marks : " << heap[1];
+    for (i = 0; i <= n1; i++)
+        cout << "\n"
+             << heap[i];
+    cout << "\nMin marks : " << heap1[1];
+    for (i = 0; i <= n1; i++)
+        cout << "\n"
+             << heap1[i];
+}
+int main()
+{
+    hp h;
+    h.getdata();
+    h.minmax();
+    return 0;
+}
