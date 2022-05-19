@@ -1,4 +1,9 @@
-                                           //Assignment no. 1
+Command 1: cd Desktop
+Command 2: g++ urfilename.cpp
+Command 3: ./a.out                                        			
+					
+					
+					//Assignment no. 1
 
 /*A book consists of chapters, chapters consist of sections and sections consist of
 subsections. Construct a tree and print the nodes. Find the time and space requirements
